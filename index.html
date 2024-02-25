@@ -1,16 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ title }}</title>
+    <title>Scryfall URL -> TTS Card Style</title>
+    <script>
+        window.onload = function() {
+            // Set focus to the input field on page load
+            document.getElementById("scryfall_url").focus();
+        };
+
+        function submitForm() {
+            var url = document.getElementById("scryfall_url").value;
+            var apiUrl = 'https://iho4amb4lc.execute-api.ap-southeast-2.amazonaws.com/dev';
+            
+            fetch(apiUrl + '?url=' + encodeURIComponent(url))
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("result").textContent = data;
+                    copyToClipboard(data);
+                })
+                .catch(error => console.error('Error:', error));
+
+            return false; // Prevent form from submitting normally
+        }
+
+        function copyToClipboard(text) {
+            var textarea = document.createElement("textarea");
+            textarea.textContent = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy"); 
+            textarea.remove();
+        }
+    </script>
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <form method="post">
-        Scryfall URL: <input type="text" name="scryfall_url"><br>
+    <title>Scryfall URL -> TTS Card Style</title>
+    <form onsubmit="return submitForm();">
+        Scryfall URL: <input type="text" name="scryfall_url" id="scryfall_url"><br>
         <input type="submit" value="Submit">
     </form>
-    {% if result %}
-        <p>Result: {{ result }}</p>
-    {% endif %}
+    <p>Result: <span id="result"></span></p>
 </body>
 </html>
