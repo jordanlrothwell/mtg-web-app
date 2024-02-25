@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <form method="post">
+        Scryfall URL: <input type="text" name="scryfall_url"><br>
+        <input type="submit" value="Submit">
+    </form>
+    {% if result %}
+        <p>Result: {{ result }}</p>
+    {% endif %}
+</body>
+</html>
