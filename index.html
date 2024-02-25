@@ -2,9 +2,64 @@
 <html>
 <head>
     <title>Scryfall URL -> TTS Card Style</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #eee;
+            border: 1px solid #ddd;
+            display: inline-block;
+            min-width: 300px;
+        }
+        #copyButton {
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        #copyButton:hover {
+            background-color: #218838;
+        }
+        #copyMessage {
+            color: #28a745;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
     <script>
         window.onload = function() {
-            // Set focus to the input field on page load
             document.getElementById("scryfall_url").focus();
         };
 
@@ -15,30 +70,46 @@
             fetch(apiUrl + '?url=' + encodeURIComponent(url))
                 .then(response => response.text())
                 .then(data => {
-                    document.getElementById("result").textContent = data;
-                    copyToClipboard(data);
+                    var resultElement = document.getElementById("result");
+                    resultElement.textContent = data.replace(/\"/g, "");
+                    copyToClipboard();
+                    showCopyMessage();
                 })
                 .catch(error => console.error('Error:', error));
 
-            return false; // Prevent form from submitting normally
+            return false;
         }
 
-        function copyToClipboard(text) {
+        function copyToClipboard() {
+            var text = document.getElementById("result").textContent;
             var textarea = document.createElement("textarea");
             textarea.textContent = text;
             document.body.appendChild(textarea);
             textarea.select();
             document.execCommand("copy"); 
             textarea.remove();
+            showCopyMessage();
+        }
+
+        function showCopyMessage() {
+            var messageElement = document.getElementById("copyMessage");
+            messageElement.style.display = "block";
+            setTimeout(function() {
+                messageElement.style.display = "none";
+            }, 2000);
         }
     </script>
 </head>
 <body>
-    <title>Scryfall URL -> TTS Card Style</title>
+    <h1>Scryfall URL -> TTS Card Style</h1>
     <form onsubmit="return submitForm();">
-        Scryfall URL: <input type="text" name="scryfall_url" id="scryfall_url"><br>
+        <label for="scryfall_url">Scryfall URL:</label>
+        <input type="text" name="scryfall_url" id="scryfall_url">
         <input type="submit" value="Submit">
     </form>
-    <p>Result: <span id="result"></span></p>
+    <p>Result: <span id="result"></span>
+        <span id="copyButton" onclick="copyToClipboard()">Copy</span>
+    </p>
+    <p id="copyMessage">Copied to clipboard!</p>
 </body>
 </html>
